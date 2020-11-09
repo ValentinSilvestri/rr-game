@@ -129,6 +129,21 @@
         }
     }
     
+    function sendinformacion (score){
+        fetch(`https://jsonplaceholder.typicode.com/users?posts=${score}`, {
+            method: 'GET'
+        })
+        .then(function(response) {
+            if(response.ok) {
+                console.log('Score sent successfully');
+                console.log(response);
+            }
+        })
+        .catch(function(err) {
+            console.log('Error trying to send the score');
+        });
+    }
+
     function run() {
         setTimeout(run, 50);
         if (scenes.length) {
@@ -148,6 +163,9 @@
         // Create food
         food = new Rectangle(80, 80, 10, 10);
         plus = new Rectangle(80, 80, 10, 10);
+
+        plus.x = canvas.width+1;
+        plus.y = null;
         
         // Load saved highscores
         if (localStorage.highscores) {
@@ -293,13 +311,21 @@
             if (body[0].intersects(food)) {
                 body.push(new Rectangle(0, 0, 10, 10));
                 score += 1;
+                sendinformacion(score)
                 food.x = random(canvas.width / 10 - 1) * 10;
                 food.y = random(canvas.height / 10 - 1) * 10;
+                if (score == 2) {
+                    setTimeout(function fPlus() {
+                        plus.x = random(canvas.width / 10 - 1) * 10;
+                        plus.y = random(canvas.height / 10 - 1) * 10;
+                    }, random(3000)+5000)
+                }
             }
 
             // Plus Intersects
             if (body[0].intersects(plus)) {
                 score += 3;
+                sendinformacion(score)
                 plus.x = canvas.width+1;
                 plus.y = null;
                 setTimeout(function fPlus() {
